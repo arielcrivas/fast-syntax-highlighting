@@ -10,7 +10,7 @@
 # option in $1), no region_highlight file then.
 #
 
-[[ -z "$ZSH_VERSION" ]] && exec /usr/bin/env /usr/local/bin/zsh-5.5.1 -f -c "source \"$0\" \"$1\" \"$2\" \"$3\""
+[[ -z "$ZSH_VERSION" ]] && exec /usr/bin/env /usr/bin/zsh -f -c "source \"$0\" \"$1\" \"$2\" \"$3\""
 
 ZERO="${(%):-%N}"
 
@@ -117,8 +117,8 @@ git checkout cb66b11
         local in="var=\$( other )
 local var2=\$(( other + 1 ))
 () { eval \"\$var\"; }
-sudo -i -s ls -1 >/tmp/ls-log.txt /var/log
-IFS=\$'\\n' print -rl -- \$(command ls -1 | tee -a /tmp/ls-1.txt)
+sudo -i -s ls -1 >\${FAST_TMPDIR}/ls-log.txt /var/log
+IFS=\$'\\n' print -rl -- \$(command ls -1 | tee -a \${FAST_TMPDIR}/ls-1.txt)
 var3=\$(( HISTSIZE + 10 + \$var ))
 local var4=\$( other command )
 touch \$(( HISTSIZE + \$SAVEHIST + 10 ))

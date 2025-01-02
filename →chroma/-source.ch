@@ -47,7 +47,7 @@ integer __idx1 __idx2
         (( FAST_HIGHLIGHT[chroma-src-counter] += 1, __idx1 = FAST_HIGHLIGHT[chroma-src-counter] ))
 
         if (( FAST_HIGHLIGHT[chroma-src-counter] == 1 )); then
-            command mkdir -p "$__home"
+            command install -d -m $[[##8]8#777&~8#$(umask)] "$__home"
             command cp -f "${__wrd}" "$__home" 2>/dev/null && {
                 zcompile "$__home"/"${__wrd:t}" 2>/dev/null 1>&2 && __style=${FAST_THEME_NAME}correct-subtle || __style=${FAST_THEME_NAME}incorrect-subtle
             }

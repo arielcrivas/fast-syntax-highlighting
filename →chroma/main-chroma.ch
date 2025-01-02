@@ -16,7 +16,7 @@
 (( next_word = 2 | 8192 ))
 
 →chroma/main-chroma-print() {
-    (( FAST_HIGHLIGHT[DEBUG] )) && print "$@" >> /tmp/fsh-dbg
+    (( FAST_HIGHLIGHT[DEBUG] )) && print "$@" >> ${FAST_TMPDIR}/fsh-dbg
 }
 
 local __chroma_name="${1#\%}" __first_call="$2" __wrd="$3" __start_pos="$4" __end_pos="$5"
@@ -169,7 +169,7 @@ map=( "#" "_H" "^" "_D" "*" "_S" )
     [[ ${#__splitted} -eq 1 && -z "${__splitted[1]}" ]] && __splitted=()
     __splitted=( "${__splitted[@]//((#s)[[:space:]]##|[[:space:]]##(#e))/}" )
 
-    →chroma/main-chroma-print -rl -- "[B] MAIN-PROCESS-TOKEN: got [OPTION/ARG-**S-E-T-S**] //-splitted from subcmd:$__subcmd: ${${(j:, :)__splitted}:-EMPTY-SET!}" "----- __splitted\\Deleted: -----" ${${(j:, :)${__splitted[@]:#(${(~j:|:)${(@)=FAST_HIGHLIGHT[chroma-${FAST_HIGHLIGHT[chroma-current]}-deleted-nodes]}})}}:-EMPTY-SET (deleted)!} "----- Added\\Deleted: -----" ${${(j:, :)${${(@)=FAST_HIGHLIGHT[chroma-${FAST_HIGHLIGHT[chroma-current]}-added-nodes]}:#(${(~j:|:)${(@)=FAST_HIGHLIGHT[chroma-${FAST_HIGHLIGHT[chroma-current]}-deleted-nodes]}})}}:-EMPTY-SET (added)!} -----\ Deleted:\ ----- ${(j:, :)${(@)=FAST_HIGHLIGHT[chroma-${FAST_HIGHLIGHT[chroma-current]}-deleted-nodes]}} >> /tmp/reply
+    →chroma/main-chroma-print -rl -- "[B] MAIN-PROCESS-TOKEN: got [OPTION/ARG-**S-E-T-S**] //-splitted from subcmd:$__subcmd: ${${(j:, :)__splitted}:-EMPTY-SET!}" "----- __splitted\\Deleted: -----" ${${(j:, :)${__splitted[@]:#(${(~j:|:)${(@)=FAST_HIGHLIGHT[chroma-${FAST_HIGHLIGHT[chroma-current]}-deleted-nodes]}})}}:-EMPTY-SET (deleted)!} "----- Added\\Deleted: -----" ${${(j:, :)${${(@)=FAST_HIGHLIGHT[chroma-${FAST_HIGHLIGHT[chroma-current]}-added-nodes]}:#(${(~j:|:)${(@)=FAST_HIGHLIGHT[chroma-${FAST_HIGHLIGHT[chroma-current]}-deleted-nodes]}})}}:-EMPTY-SET (added)!} -----\ Deleted:\ ----- ${(j:, :)${(@)=FAST_HIGHLIGHT[chroma-${FAST_HIGHLIGHT[chroma-current]}-deleted-nodes]}} >> ${FAST_TMPDIR}/reply
 
     (( ! ${#__splitted} )) && {
         __var_name="${__main_hash_name}[subcmd:*]"
@@ -240,7 +240,7 @@ map=( "#" "_H" "^" "_D" "*" "_S" )
                         # First: del-directive
                         FAST_HIGHLIGHT[chroma-${FAST_HIGHLIGHT[chroma-current]}-deleted-nodes]+="${(j: :)__split[__ivalue+1,__tmp]} "
 
-                        →chroma/main-chroma-print -rl ":add / :del directives: __ivalue:$__ivalue, THE __SPLIT[#$__tmp]: " "${__split[@]}" "//" "The FAST_HIGHLIGHT[chroma-*deleted-nodes]: " ${=FAST_HIGHLIGHT[chroma-${FAST_HIGHLIGHT[chroma-current]}-deleted-nodes]} >> /tmp/reply
+                        →chroma/main-chroma-print -rl ":add / :del directives: __ivalue:$__ivalue, THE __SPLIT[#$__tmp]: " "${__split[@]}" "//" "The FAST_HIGHLIGHT[chroma-*deleted-nodes]: " ${=FAST_HIGHLIGHT[chroma-${FAST_HIGHLIGHT[chroma-current]}-deleted-nodes]} >> ${FAST_TMPDIR}/reply
 
                         # Second: add-directive
                         FAST_HIGHLIGHT[chroma-${FAST_HIGHLIGHT[chroma-current]}-added-nodes]+="${(j: :)__split[1,__ivalue]} "
@@ -417,7 +417,7 @@ else
 		(( ${(P)+__var_name} )) && { →chroma/main-chroma-print -r -- "Running subcmd-hook: ${(P)__var_name}" ; "${(P)__var_name}" "$__wrd"; }
                 __style="${FAST_THEME_NAME}subcommand"
             else
-                →chroma/main-chroma-print "subcmd verif / NOT OK; Incrementing the COUNTER-ARG ${FAST_HIGHLIGHT[chroma-${FAST_HIGHLIGHT[chroma-current]}-counter-arg]} -> $(( FAST_HIGHLIGHT[chroma-${FAST_HIGHLIGHT[chroma-current]}-counter-arg] + 1 ))" >> /tmp/fsh-dbg
+                →chroma/main-chroma-print "subcmd verif / NOT OK; Incrementing the COUNTER-ARG ${FAST_HIGHLIGHT[chroma-${FAST_HIGHLIGHT[chroma-current]}-counter-arg]} -> $(( FAST_HIGHLIGHT[chroma-${FAST_HIGHLIGHT[chroma-current]}-counter-arg] + 1 ))" >> ${FAST_TMPDIR}/fsh-dbg
                 (( FAST_HIGHLIGHT[chroma-${FAST_HIGHLIGHT[chroma-current]}-counter-arg] += 1 ))
                 →chroma/main-chroma-print "UNRECOGNIZED ARGUMENT ${FAST_HIGHLIGHT[chroma-${FAST_HIGHLIGHT[chroma-current]}-counter-arg]}"
                 →chroma/main-process-token.ch "${${FAST_HIGHLIGHT[chroma-${FAST_HIGHLIGHT[chroma-current]}-subcommand]}:-NULL}" "$__wrd"

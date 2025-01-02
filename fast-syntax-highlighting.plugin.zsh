@@ -44,7 +44,15 @@ typeset -ga _FAST_MAIN_CACHE
 # are complex, i.e. e.g. part of "[[" in [[ ... ]]
 typeset -ga _FAST_COMPLEX_BRACKETS
 
-typeset -g FAST_WORK_DIR=${FAST_WORK_DIR:-${XDG_CACHE_HOME:-~/.cache}/fast-syntax-highlighting}
+if (( $EUID >= 1000 )); then
+  typeset -g FAST_TMPDIR=${XDG_RUNTIME_DIR:-/run/user/${EUID}}
+else
+  typeset -g FAST_TMPDIR=/tmp/.fast-syntax-highlighting
+fi
+[[ -w $FAST_TMPDIR ]] || command install -d -m u=rwx,go= "$FAST_TMPDIR"
+unset __mode__
+
+typeset -g FAST_WORK_DIR=${FAST_WORK_DIR:-${XDG_CACHE_HOME:-${HOME}/.cache}/fast-syntax-highlighting}
 : ${FAST_WORK_DIR:=${FAST_BASE_DIR-}}
 # Expand any tilde in the (supposed) path.
 FAST_WORK_DIR=${~FAST_WORK_DIR}
@@ -58,7 +66,7 @@ fi
 
 if [[ ! -w $FAST_WORK_DIR ]]; then
     FAST_WORK_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/fsh"
-    command mkdir -p "$FAST_WORK_DIR"
+    command install -d -m 0755 "$FAST_WORK_DIR"
 fi
 
 # Invokes each highlighter that needs updating.
@@ -269,7 +277,7 @@ _zsh_highlight_bind_widgets()
               zle -N -- $cur_widget _zsh_highlight_widget_$prefix-$cur_widget;;
 
       # Completion widget: override and rebind old one with prefix "orig-".
-      completion:*) zle -C $prefix-$cur_widget ${${(s.:.)widgets[$cur_widget]}[2,3]} 
+      completion:*) zle -C $prefix-$cur_widget ${${(s.:.)widgets[$cur_widget]}[2,3]}
                     eval "_zsh_highlight_widget_${(q)prefix}-${(q)cur_widget}() { _zsh_highlight_call_widget ${(q)prefix}-${(q)cur_widget} -- \"\$@\" }"
                     zle -N -- $cur_widget _zsh_highlight_widget_$prefix-$cur_widget;;
 
@@ -278,7 +286,7 @@ _zsh_highlight_bind_widgets()
                zle -N -- $cur_widget _zsh_highlight_widget_$prefix-$cur_widget;;
 
       # Incomplete or nonexistent widget: Bind to z-sy-h directly.
-      *) 
+      *)
          if [[ $cur_widget == zle-* ]] && [[ -z ${widgets[$cur_widget]-} ]]; then
            _zsh_highlight_widget_${cur_widget}() { :; _zsh_highlight }
            zle -N -- $cur_widget _zsh_highlight_widget_$cur_widget
@@ -315,7 +323,7 @@ add-zsh-hook preexec _zsh_highlight_preexec_hook 2>/dev/null || {
 }
 
 /fshdbg() {
-    print -r -- "$@" >>! /tmp/reply
+    print -r -- "$@" >>! ${FAST_TMPDIR}/reply
 }
 
 typeset -g ZSH_HIGHLIGHT_MAXLENGTH=10000
