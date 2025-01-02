@@ -19,7 +19,7 @@ jobs:
 
       - name: install dependencies
         run: |
-          brew install shellcheck shfmt zsh
+          apt-get install shellcheck shfmt zsh
           pip3 install --user linkify-it-py mdformat mdformat-config mdformat-gfm mdformat-shfmt mdformat-tables mdformat-toc
 
       - name: run mdformat
