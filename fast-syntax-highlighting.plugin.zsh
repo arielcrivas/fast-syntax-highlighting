@@ -44,13 +44,11 @@ typeset -ga _FAST_MAIN_CACHE
 # are complex, i.e. e.g. part of "[[" in [[ ... ]]
 typeset -ga _FAST_COMPLEX_BRACKETS
 
-if (( $EUID >= 1000 )); then
-  typeset -g FAST_TMPDIR=${XDG_RUNTIME_DIR:-/run/user/${EUID}}
-else
-  typeset -g FAST_TMPDIR=/tmp/.fast-syntax-highlighting
-fi
-[[ -w $FAST_TMPDIR ]] || command install -d -m u=rwx,go= "$FAST_TMPDIR"
-unset __mode__
+# $XDG_RUNTIME_DIR is only available with a full desktop session
+# thus, we create a hidden directory in /tmp
+typeset -gr FAST_TMPDIR=${TMPDIR:-/tmp}/.fast-syntax-highlighting-${USER}
+[[ -w $FAST_TMPDIR ]] || \
+  command install -d -m u=rwx,go= "$FAST_TMPDIR"
 
 typeset -g FAST_WORK_DIR=${FAST_WORK_DIR:-${XDG_CACHE_HOME:-${HOME}/.cache}/fast-syntax-highlighting}
 : ${FAST_WORK_DIR:=${FAST_BASE_DIR-}}
